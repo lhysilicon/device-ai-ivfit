@@ -8,7 +8,8 @@ import sys
 ALLOW = re.compile(
     r"^(README\.md|LICENSE|SPEC\.md|Makefile|requirements\.txt|\.gitignore|"
     r"src/.*|data/synthetic\.csv|reports/\.gitkeep|"
-    r"scripts/leak_check\.py|\.github/workflows/.*\.yml)$"
+    r"scripts/leak_check\.py|\.github/workflows/.*\.yml|"
+    r"docs/.*\.md|figs/.*\.png|models/.*\.inc)$"
 )
 FORBIDDEN_SUFFIX = {".plt", ".tdr", ".lib", ".lef", ".gds", ".db"}
 PATH_LEAK = re.compile(

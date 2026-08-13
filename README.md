@@ -1,23 +1,24 @@
 # device-ai-ivfit
 
-Silicon MOSFET I–V compact-model **baseline**: square-law synthetic data + a tiny
-NumPy MLP. Compare the network against the analytic model and report RMSE.
+End-to-end **MOSFET compact-model extraction + tiny MLP surrogate**.
 
-This is an internship modeling repo. It is **not** a foundry PDK dump and
-**not** a ferroelectric / carbon-nanotube thesis repo.
+The DUT is an EKV-like teaching model (subthreshold + square-law) with 3% log-domain noise.
+It is **not** wafer data and **not** a foundry PDK. The extractor does not read the hidden parameters.
 
-`rmse_test` on `data/synthetic.csv` is a **script self-check**, not device accuracy.
+```
+I–V family  →  extract Vth / SS / k / λ  →  compact card
+            →  MLP on log10(Id) (train Vg≤1.2 V)
+            →  hold out Vg>1.2 V (must get worse)
+            →  Id–Vg / Id–Vd / error map
+```
 
-## Files
+## Figures
 
-| Path | What |
-|------|------|
-| `SPEC.md` | Contract and allowlist |
-| `src/physics.py` | Square-law Id(Vg,Vd) (teaching model, not BSIM) |
-| `src/model.py` | 2→8→1 MLP |
-| `src/generate_synthetic.py` | Writes `data/synthetic.csv` |
-| `src/fit.py` | Train / RMSE / physics mutant |
-| `data/synthetic.csv` | Generated I–V, columns `vg,vd,id` |
+![Id–Vg](figs/idvg.png)
+
+![Id–Vd](figs/idvd.png)
+
+![MLP error](figs/mlp_error.png)
 
 ## Run
 
@@ -28,24 +29,42 @@ pip install -r requirements.txt
 make all
 ```
 
-Expect: `FIT: PASS`, `PHYSICS CHECK: PASS`, mutant `--vth 1.2` caught, `LEAK CHECK: PASS`.
+Expect `FIT: PASS`. Meaning of the gates:
 
-To fit a real TCAD export later (same columns, not committed here):
+| Gate | Meaning |
+|------|---------|
+| `vth_err < 0.08` | √Id intercept recovered threshold |
+| `log_rmse_mlp_in < 0.45` | surrogate is usable **inside** the train box |
+| `log_rmse_mlp_extra > in` | the network is **not** a physical law |
 
-```bash
-PYTHONPATH=src python3 src/fit.py --csv /path/to/idvg.csv
+`--check-physics --vth 1.2` must fail (device off).
+
+## Resume lines (honest)
+
+```
+• Built an end-to-end MOSFET I–V compact-model flow: extract Vth/SS/k/λ from
+  Id–Vg/Id–Vd families, emit a SPICE-like card, and train a tiny MLP surrogate.
+• Validated extraction to <80 mV Vth error on a noisy teaching DUT; showed the
+  MLP error rising outside the train bias window (no physics extrapolation).
+• Published scripts, figures, and the extracted card at
+  github.com/lhysilicon/device-ai-ivfit (no PDK, no foundry models).
 ```
 
-## Evidence (this machine)
+Do **not** replace those lines with “fitted foundry silicon” or a BSIM/PDK claim.
 
-- `make all` → `rmse_test ≈ 7.5e-6` on synthetic data (`< 5e-5` gate)
-- analytic RMSE on the same CSV is ~1e-11 (CSV **is** the square-law)
+## Files
 
-## Limitations
+| Path | What |
+|------|------|
+| `docs/method.md` | 15-minute talk |
+| `src/physics.py` | DUT (hidden params) |
+| `src/extract.py` | compact-model extraction |
+| `src/model.py` | MLP on log10(Id) |
+| `src/fit.py` | orchestration + gates |
+| `models/nmos_extracted.inc` | extracted card |
+| `data/synthetic.csv` | generated I–V (`vg,vd,id`) |
 
-- Synthetic square-law ≠ measured silicon ≠ BSIM.
-- Do not write "fitted foundry silicon" until a lab CSV is used and that fact is in the README.
-- No PDK, no Sentaurus decks, no binary `.plt` in git.
+Later: `python3 src/fit.py --csv your.csv` with the same columns. Lab decks stay off git.
 
 ## License
 
