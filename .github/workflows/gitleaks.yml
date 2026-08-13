@@ -1,0 +1,29 @@
+# v1-20260705 (copied from simple_ic_alu; pin gitleaks, no repo-local config)
+name: gitleaks
+on: [push, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      with: { fetch-depth: 0 }
+    - name: forbid repo-local gitleaks config (mirror local L2)
+      run: |
+        if [ -e .gitleaks.toml ] || [ -e .gitleaksignore ]; then
+          echo "::error::repo-local gitleaks config forbidden; rules pinned to built-in defaults"; exit 1; fi
+    - name: install pinned gitleaks
+      run: |
+        curl -sSLo gitleaks.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+        echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks.tgz" | sha256sum -c -
+        tar -xzf gitleaks.tgz gitleaks
+    - name: scan pushed range (built-in ruleset only, no repo-readable config)
+      env:
+        BEFORE: ${{ github.event.before }}
+        AFTER: ${{ github.sha }}
+      run: |
+        if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then LOG_OPTS="-n 100"
+        elif ! git cat-file -e "$BEFORE" 2>/dev/null; then LOG_OPTS="-n 100"
+        else LOG_OPTS="$BEFORE..$AFTER"; fi
+        ./gitleaks git --redact --no-banner --ignore-gitleaks-allow --log-opts="$LOG_OPTS" .

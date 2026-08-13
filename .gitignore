@@ -1,0 +1,8 @@
+STATE.md
+.venv/
+__pycache__/
+*.pyc
+reports/*.json
+!reports/.gitkeep
+data/tcad_raw/
+.DS_Store
