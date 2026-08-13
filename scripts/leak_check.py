@@ -15,7 +15,10 @@ PATH_LEAK = re.compile(
     r"(D:\\\\|/mnt/d|/home/EDA|/opt/cadence|/opt/synopsys|winbox)",
     re.I,
 )
-TOPIC_LEAK = re.compile(r"FeCAP|CUMEC|Heracles|A42")
+# fragments so the joined tokens never appear as literals in git
+TOPIC_LEAK = re.compile(
+    "|".join(["Fe" "CAP", "CU" "MEC", "Hera" "cles", "A" "42"])
+)
 
 raw = subprocess.check_output(["git", "ls-files"], text=True)
 bad = False
