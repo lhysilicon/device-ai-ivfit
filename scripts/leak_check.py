@@ -7,7 +7,7 @@ import sys
 
 ALLOW = re.compile(
     r"^(README\.md|LICENSE|SPEC\.md|Makefile|requirements\.txt|\.gitignore|"
-    r"src/.*|data/synthetic\.csv|reports/\.gitkeep|"
+    r"src/.*|data/synthetic\.csv|data/tcad_tutorial\.csv|reports/\.gitkeep|"
     r"scripts/leak_check\.py|\.github/workflows/.*\.yml|"
     r"docs/.*\.md|figs/.*\.png|models/.*\.inc)$"
 )

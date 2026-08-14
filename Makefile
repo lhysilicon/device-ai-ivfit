@@ -1,10 +1,13 @@
-.PHONY: all fit physics mutant-physics leak-check schema
+.PHONY: all fit tcad physics mutant-physics leak-check schema
 
-all: fit physics mutant-physics schema leak-check
+all: fit physics mutant-physics tcad schema leak-check
 
 fit:
 	PYTHONPATH=src python3 src/generate_synthetic.py
 	PYTHONPATH=src python3 src/fit.py
+
+tcad:
+	PYTHONPATH=src python3 src/fit.py --csv data/tcad_tutorial.csv
 
 physics:
 	PYTHONPATH=src python3 src/fit.py --check-physics

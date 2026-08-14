@@ -74,11 +74,16 @@ def main() -> int:
     card = ROOT / "models" / "nmos_extracted.inc"
     write_card(card, extracted)
 
-    vth_err = abs(extracted.vth - TRUE.vth)
+    synthetic = args.csv.name == "synthetic.csv"
+    vth_err = abs(extracted.vth - TRUE.vth) if synthetic else None
     payload = {
         "source": str(args.csv.name),
-        "dut": "ekv-like generator + 3% log noise (not wafer, not foundry)",
-        "vth_true": TRUE.vth,
+        "dut": (
+            "ekv-like generator + 3% log noise (not wafer, not foundry)"
+            if synthetic
+            else "Sentaurus GettingStarted SOI_IdVg tutorial I-V (Lg=0.2 um SOI nMOS; not wafer, not foundry PDK)"
+        ),
+        "vth_true": TRUE.vth if synthetic else None,
         "vth_hat": extracted.vth,
         "vth_err": vth_err,
         "ss_mVdec": extracted.ss_mVdec,
@@ -101,9 +106,17 @@ def main() -> int:
     print(json.dumps(payload, indent=2))
 
     ok = True
-    if vth_err >= VTH_ERR_MAX:
+    if synthetic and vth_err is not None and vth_err >= VTH_ERR_MAX:
         print(f"FIT FAIL vth_err={vth_err}")
         ok = False
+    if not synthetic:
+        ss = payload["ss_mVdec"]
+        if not (ss == ss and 40.0 < ss < 200.0):
+            print(f"FIT FAIL ss_mVdec={ss}")
+            ok = False
+        if not (0.05 < extracted.vth < 1.2):
+            print(f"FIT FAIL vth_hat={extracted.vth}")
+            ok = False
     if payload["log_rmse_mlp_in"] >= LOG_RMSE_IN_MAX:
         print(f"FIT FAIL log_rmse_mlp_in={payload['log_rmse_mlp_in']}")
         ok = False
