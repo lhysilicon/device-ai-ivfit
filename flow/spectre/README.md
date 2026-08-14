@@ -1,6 +1,8 @@
-# Spectre 对照（本机，不进 PDK）
+# Spectre 对照（无 PDK）
 
 `nmos_extracted.va` 是教学 Verilog-A，方程与 `src/physics.py` 的紧凑模型相同，**不是 BSIM**。
+
+`make all` 在 Mac 上就能跑，不需要 Spectre。Cadence Spectre 装在 EDA 机的 Linux/WSL 上，**不是** Mac 笔记本。不要把实验室绝对路径写进本仓。
 
 在已 source Cadence 环境的 WSL ext4 上：
 

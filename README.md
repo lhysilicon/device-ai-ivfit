@@ -69,7 +69,7 @@ Do **not** replace those lines with “fitted foundry silicon” or a BSIM/PDK c
 | `src/fit.py` | orchestration + gates |
 | `models/nmos_extracted.inc` | extracted card |
 | `models/nmos_extracted.va` | same compact model in Verilog-A (not BSIM) |
-| `flow/spectre/tb_idvg.scs` | optional Spectre DC sweep template |
+| `flow/spectre/tb_idvg.scs` | optional Spectre DC sweep template (EDA Linux/WSL, not the Mac laptop) |
 | `data/synthetic.csv` | generated I–V (`vg,vd,id`) |
 | `data/tcad_tutorial.csv` | Sentaurus tutorial I–V (`vg,vd,id` only) |
 
