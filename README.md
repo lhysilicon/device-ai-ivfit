@@ -5,7 +5,7 @@ End-to-end **MOSFET compact-model extraction + tiny MLP surrogate**.
 Two DUTs, same extractor (the extractor never reads hidden parameters):
 
 1. Default `make all` synthetic path: EKV-like teaching model (subthreshold + square-law) + 3% log-domain noise. **Not** wafer data.
-2. `data/tcad_tutorial.csv`: I–V exported from the Synopsys Sentaurus **GettingStarted** example `sdevice/SOI_IdVg` (Lg = 0.2 µm SOI nMOS, body tied). **Not** a foundry PDK and **not** silicon-on-wafer measurement. Lab decks / `.plt` stay off git.
+2. `data/tcad_tutorial.csv`: I–V exported from the Synopsys Sentaurus **GettingStarted** example `sdevice/SOI_IdVg` (Lg = 0.2 µm SOI nMOS, body tied). Sweeps used default drift-diffusion (not the tutorial's high-Vd hydrodynamics). **Not** a foundry PDK and **not** silicon-on-wafer measurement. Lab decks / `.plt` stay off git.
 
 ```
 I–V family  →  extract Vth / SS / k / λ  →  compact card
