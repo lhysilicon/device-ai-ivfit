@@ -10,7 +10,7 @@
 2. 合成路径 `src/fit.py`（默认 CSV）：`vth_err < 0.08`；`log_rmse_mlp_in < 0.45`；`log_rmse_mlp_extra > log_rmse_mlp_in`。
 3. TCAD 路径 `src/fit.py --csv data/tcad_tutorial.csv`：不得用合成 `TRUE.vth` 当误差门；`40 < ss_mVdec < 200`；`0.05 < vth_hat < 1.2`；窗内外 MLP 误差门与图门同合成路径。
 4. `figs/idvg.png` `figs/idvd.png` `figs/mlp_error.png` 每个 > 2 KB。
-5. `models/nmos_extracted.inc` 存在。
+5. `models/nmos_extracted.inc` 与 `models/nmos_extracted.va` 存在；`.va` 含 `I(d, s)`。
 6. `--check-physics --vth 1.2` 非零。缺 CSV 列非零。
 7. `make leak-check` 退出 0。
 

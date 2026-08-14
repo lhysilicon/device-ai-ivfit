@@ -130,6 +130,10 @@ def main() -> int:
     if not card.exists():
         print("FIT FAIL missing spice card")
         ok = False
+    va = card.with_suffix(".va")
+    if not va.exists() or "I(d, s)" not in va.read_text():
+        print("FIT FAIL missing Verilog-A compact model")
+        ok = False
     if ok:
         print("FIT: PASS")
         return 0

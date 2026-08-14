@@ -5,4 +5,7 @@ __pycache__/
 reports/*.json
 !reports/.gitkeep
 data/tcad_raw/
+flow/spectre/out/
+flow/spectre/*.raw
+*.ahdlcmi
 .DS_Store

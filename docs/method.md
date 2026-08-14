@@ -4,6 +4,6 @@
 2. **提参**：亚阈 SS；饱和区 √Id–Vg 截距得 Vth；强反型最小二乘得 k、λ。
 3. **MLP**：输入 (Vg,Vd)，目标 log10(Id)，只在 Vg≤1.2 V 训练。
 4. **外推**：Vg>1.2 V 必须更差——替代模型不是器件物理。
-5. **卡片**：`models/nmos_extracted.inc` 给网表用，不是 BSIM。
+5. **卡片**：`models/nmos_extracted.inc` 给网表用；同参数的 `models/nmos_extracted.va` 给 Spectre 对照。都不是 BSIM。
 
 命令：`make all` 生成数据、提参、训练、出图、写卡片。

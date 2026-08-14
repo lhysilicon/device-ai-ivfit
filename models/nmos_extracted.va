@@ -1,0 +1,32 @@
+// Teaching NMOS compact model (subthreshold + square-law). Not BSIM.
+`include "disciplines.vams"
+module nmos_extracted(d, g, s);
+    inout d, g, s;
+    electrical d, g, s;
+    parameter real vth = 0.41818134;
+    parameter real nfac = 1.48874709;
+    parameter real i0 = 1.39958025e-07;
+    parameter real k = 5.05371814e-04;
+    parameter real lam = 0.05945682;
+    localparam real vt = 0.02585000;
+    real vgs, vds, vov, id_lin, id_sat, id_strong, id_sub;
+    analog begin
+        vgs = V(g,s);
+        vds = V(d,s);
+        if (vds < 1.0e-6) vds = 1.0e-6;
+        vov = vgs - vth;
+        id_sub = 0.0;
+        id_strong = 0.0;
+        if (vov < 0.0) begin
+            id_sub = i0 * exp(vov / (nfac * vt)) * (1.0 - exp(-vds / vt));
+            if (id_sub < 0.0) id_sub = 0.0;
+        end else begin
+            id_lin = k * (vov * vds - 0.5 * vds * vds);
+            id_sat = 0.5 * k * vov * vov * (1.0 + lam * vds);
+            if (vds > vov) id_strong = id_sat;
+            else if (id_lin > 0.0) id_strong = id_lin;
+            else id_strong = 0.0;
+        end
+        I(d, s) <+ id_sub + id_strong;
+    end
+endmodule
